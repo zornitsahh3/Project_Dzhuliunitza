@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<HTML LANG="en">
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <title>Home</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <!--<link rel="stylesheet" href="style.css">-->
+    </head>
+    <body>
+    <header class="site-header">
+            <div class="logo">
+                <img src="images/logo.png" width="200" alt="Website logo">
+            </div>
+        <div class="header-text">   
+         <!--  <h1>E-commerce</h1> -->
+            <p>The Fashion Store</p>
+        </div> 
+
+        <!--naviation bar-->
+    </header>
+
+        <main>
+            <div class="layout">
+                <!-- Filtering sidebar (to the left)-->
+                <aside class="filter">
+                    <h3>Filters</h3>
+
+                    <label>
+                        <input type="checkbox" value="price-low">Price: Low to High
+                    </label><br>
+                    <label>
+                        <input type="checkbox" value="price-high">Price: High to Low
+                    </label><br>
+                    <label>
+                        <input type="checkbox" value="rating">Highest Rating
+                    </label><br>    
+                    <label>
+                        <input type="checkbox" value="discount">Discounted Only
+                    </label>
+                </aside>
+                <!-- Products area (to the right)-->
+                 <div class="products-area">
+                    <nav class="nav-menu">
+                        <button onclick="showCategory('bags')">Bags</button>
+                        <button onclick="showCategory('shoes')">Shoes</button>
+                    </nav>
+                    <div id="product-count"></div>
+                    <div id="product-list" class="product-grid"></div>
+                    <button id="load more" onclick="loadMore()">Load More</button>
+                </div>
+            </div>
+        </main>
+        <script src="products_list.js"></script>
+        <script src="main.js"></script>
+    </body>
+</HTML>
