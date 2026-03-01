@@ -28,11 +28,23 @@ body {
 }
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 .product-card img {
     width: 150px;
     height: 150px;
     object-fit: cover;
+}
+.logo {
+    width:180 px;
+}
+@media (max-width: 768px) {
+    .logo {
+        width:120px;
+    }
+}
+.logo-img {
+    max-width:100%;
+    height:auto;
 }
