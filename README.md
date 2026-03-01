@@ -1,4 +1,4 @@
-# Product Listing Page :moneybag: :money_with_wings:
+# Product Listing Page 💳🛒
 
 # Summary 
 
