@@ -25,9 +25,6 @@ Front-End Focus Only:
 - You may also use CSS frameworks such as Bootstrap, if desired.
 - However, you must not use pre-built HTML templates, e-commerce modules, or full e-
 commerce frameworks/platforms.
-
-# Responsiveness:
-
 - The page must be fully responsive.
 - It should function and display properly on both desktop and mobile devices.
 
