@@ -2,6 +2,7 @@
  * Зарежда Google Fonts с кирилица и изгражда каталог за main.js.
  * Ограничи API ключа в Google Cloud (HTTP referrer), не го публикуваш публично без ограничения.
  */
+const API_KEY = process.env.API_KEY;
 
 const STYLE_POOL = ["modern", "minimal", "elegant", "bold"];
 const USE_POOL = ["web", "logo", "social", "presentation"];
