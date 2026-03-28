@@ -1,27 +1,50 @@
 let currentIndex = 0;
 const itemsPerPage = 20;
-let currentCategory = "bags";
+let currentCategory = "all";
 let activeFilteredProducts = null;
 
+/** Пълният каталог; пълни се асинхронно от fonts_list.js */
+let products = [];
+
 const categoryInfo = {
-    bags: {
-        title: "Bags",
-        description: "Explore our collection of stylish and functional bags."
+    all: {
+        title: "Всички комбинации",
+        description: "Преглед на двойки шрифтове с кирилица от Google Fonts.",
     },
-    shoes: {
-        title: "Shoes",
-        description: "Discover our range of fashionable and comfortable shoes."
-    }
+    serif: {
+        title: "Серифни заглавия",
+        description: "Заглавният шрифт е с засечки (serif).",
+    },
+    sans: {
+        title: "Безсерифни заглавия",
+        description: "Заглавният шрифт е без засечки (sans-serif и подобни).",
+    },
+    display: {
+        title: "Декоративни заглавия",
+        description: "Заглавният шрифт е от категория display.",
+    },
 };
 
-const priceRanges = {
-    low:    { min: 0, max: 50 },
-    medium: { min: 50, max: 100 },
-    high:   { min: 100, max: Infinity }
-};
+function navCategoryFromGoogle(cat) {
+    if (cat === "serif") return "serif";
+    if (cat === "display") return "display";
+    return "sans";
+}
+
+function loadFont(fontName) {
+    if (!fontName) return;
+    if (!window.__loadedFontFamilies) window.__loadedFontFamilies = new Set();
+    if (window.__loadedFontFamilies.has(fontName)) return;
+    window.__loadedFontFamilies.add(fontName);
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    const q = encodeURIComponent(fontName).replace(/%20/g, "+");
+    link.href = `https://fonts.googleapis.com/css2?family=${q}:wght@400;700&display=swap`;
+    document.head.appendChild(link);
+}
 
 function addToCart() {
-    alert("Product added to cart!");
+    alert("Тук по-късно: линк за лиценз / изтегляне.");
 }
 
 function showCategory(category) {
@@ -29,19 +52,32 @@ function showCategory(category) {
     currentIndex = 0;
     activeFilteredProducts = null;
 
-    document.querySelectorAll("input[type='checkbox']")
-        .forEach(cb => cb.checked = false);
+    document.querySelectorAll("input[type='checkbox']").forEach((cb) => {
+        cb.checked = false;
+    });
 
-    const info = categoryInfo[category] || {};
-    document.getElementById("category-title").textContent = info.title || "";
-    document.getElementById("category-description").textContent = info.description || "";
+    const info = categoryInfo[category] || categoryInfo.all;
+    document.getElementById("category-title").textContent = info.title;
+    document.getElementById("category-description").textContent = info.description;
 
     renderProducts();
 }
 
 function getStars(rating) {
-    const full = Math.floor(rating);
+    const n = Number(rating) || 0;
+    const full = Math.floor(n);
     return "★".repeat(full) + "☆".repeat(5 - full);
+}
+
+function categoryMatch(p) {
+    if (currentCategory === "all") return true;
+    return p.category === currentCategory;
+}
+
+function getBaseList() {
+    const source =
+        activeFilteredProducts !== null ? activeFilteredProducts : products;
+    return source.filter(categoryMatch);
 }
 
 function renderProducts() {
@@ -49,60 +85,61 @@ function renderProducts() {
     const productCount = document.getElementById("product-count");
     const loadMoreBtn = document.getElementById("load-more");
 
-    const baseProducts = activeFilteredProducts ??
-        products.filter(p => p.category === currentCategory);
+    if (!products.length) {
+        productList.innerHTML =
+            "<p>Зареждане на шрифтове… Ако това съобщение остане, провери API ключа и мрежата.</p>";
+        productCount.textContent = "";
+        loadMoreBtn.style.display = "none";
+        return;
+    }
 
-    let sortedProducts=[...baseProducts];
+    const baseProducts = getBaseList();
+    let sortedProducts = [...baseProducts];
 
-    const sortValue=document.getElementById("sort-select")?.value;
+    const sortValue = document.getElementById("sort-select")?.value;
 
     if (sortValue === "az") {
-        sortedProducts.sort((a,b) => a.name.localeCompare(b.name));
-    }
-
-    if (sortValue === "za") {
-        sortedProducts.sort((a,b) => b.name.localeCompare(a.name));
-    }
-
-    if (sortValue === "priceLow") {
-    sortedProducts.sort((a, b) =>
-        (a.price - a.discount) - (b.price - b.discount)
-    );
-    }
-
-    if (sortValue === "priceHigh") {
-        sortedProducts.sort((a, b) =>
-            (b.price - b.discount) - (a.price - a.discount)
-        );
+        sortedProducts.sort((a, b) => a.name.localeCompare(b.name, "bg"));
+    } else if (sortValue === "za") {
+        sortedProducts.sort((a, b) => b.name.localeCompare(a.name, "bg"));
+    } else if (sortValue === "popular") {
+        sortedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortValue === "modern") {
+        sortedProducts.sort((a, b) => (b.modernScore || 0) - (a.modernScore || 0));
     }
 
     const visible = sortedProducts.slice(0, currentIndex + itemsPerPage);
 
-    productList.innerHTML = visible.map(product => {
-        const finalPrice = product.price - product.discount;
-        const priceHTML = product.discount > 0
-            ? `$${finalPrice} <s>$${product.price}</s>`
-            : `$${product.price}`;
+    visible.forEach((p) => {
+        loadFont(p.headingFont);
+        loadFont(p.bodyFont);
+    });
 
-        return `
+    productList.innerHTML = visible
+        .map(
+            (p) => `
         <div class="product-card">
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>${product.description}</p>
-            <p>Color: ${product.color}</p>
-            ${product.discount > 0 ? `<span class="discount-badge">Save $${product.discount}</span>` : ""}
-            <p class="price">${priceHTML}</p>
-            <div class="stars">${getStars(product.rating)}</div>
-            <button onclick="addToCart()">Add to Cart</button>
+            <h2 style="font-family: '${p.headingFont}', serif">${escapeHtml(p.headingSample || "Заглавие пример")}</h2>
+            <p style="font-family: '${p.bodyFont}', sans-serif">${escapeHtml(p.bodySample || "Това е примерен текст на български език.")}</p>
+            <small class="font-pair-title">${escapeHtml(p.name)}</small>
+            <p class="font-meta">${escapeHtml((p.styles || []).join(", "))}</p>
+            <div class="stars">${getStars(p.rating)}</div>
+            <button type="button" onclick="addToCart()">Детайли</button>
         </div>
-        `;
-    }).join("");
+    `
+        )
+        .join("");
 
-    productCount.textContent =
-        `${visible.length} out of ${baseProducts.length} products displayed.`;
+    productCount.textContent = `Показани ${visible.length} от ${baseProducts.length}.`;
 
     loadMoreBtn.style.display =
         visible.length >= baseProducts.length ? "none" : "block";
+}
+
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function loadMore() {
@@ -110,54 +147,66 @@ function loadMore() {
     renderProducts();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    showCategory("bags");
-});
-
-document.getElementById("sort-select")
-    .addEventListener("change", renderProducts);
-
 function applyFilters() {
+    const selectedCombos = [
+        ...document.querySelectorAll(".filter-combo:checked"),
+    ].map((cb) => cb.value);
 
-    const selectedColors = [...document.querySelectorAll('.filter-color:checked')]
-        .map(cb => cb.value);
+    const selectedStyles = [
+        ...document.querySelectorAll(".filter-style:checked"),
+    ].map((cb) => cb.value);
 
-    const selectedPrices = [...document.querySelectorAll('.filter-price:checked')]
-        .map(cb => cb.value);
-
-    const discountOnly =
-        document.getElementById("discount-only").checked;
-
-    let filtered = products.filter(
-        p => p.category === currentCategory
+    const selectedUses = [...document.querySelectorAll(".filter-use:checked")].map(
+        (cb) => cb.value
     );
 
-    // Filter by color
-    if (selectedColors.length) {
-        filtered = filtered.filter(p =>
-            selectedColors.includes(p.color)
-        );
-    }
+    const cyrillicOnly = document.getElementById("cyrillic-only")?.checked;
 
-    // Filter by price range
-    if (selectedPrices.length) {
-        filtered = filtered.filter(product => {
-            const finalPrice = product.price - product.discount;
-
-            return selectedPrices.some(level => {
-                const range = priceRanges[level];
-                return finalPrice >= range.min && finalPrice < range.max;
-            });
-        });
-    }
-
-    // Filter by discount
-    if (discountOnly) {
-        filtered = filtered.filter(p => p.discount > 0);
-    }
+    const filtered = products.filter((p) => {
+        if (currentCategory !== "all" && p.category !== currentCategory) {
+            return false;
+        }
+        if (selectedCombos.length && !selectedCombos.includes(p.combo)) {
+            return false;
+        }
+        if (selectedStyles.length) {
+            const hasStyle = (p.styles || []).some((s) =>
+                selectedStyles.includes(s)
+            );
+            if (!hasStyle) return false;
+        }
+        if (selectedUses.length) {
+            const hasUse = (p.use || []).some((u) => selectedUses.includes(u));
+            if (!hasUse) return false;
+        }
+        if (cyrillicOnly && !p.cyrillic) {
+            return false;
+        }
+        return true;
+    });
 
     activeFilteredProducts = filtered;
     currentIndex = 0;
-
     renderProducts();
 }
+
+/** Извиква се от fonts_list.js когато данните са готови (може и преди DOMContentLoaded). */
+window.onFontsCatalogReady = function (catalog) {
+    products = catalog;
+    currentIndex = 0;
+    activeFilteredProducts = null;
+    const paint = () => showCategory(currentCategory);
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", paint, { once: true });
+    } else {
+        paint();
+    }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("sort-select")?.addEventListener("change", () => {
+        currentIndex = 0;
+        renderProducts();
+    });
+    renderProducts();
+});
