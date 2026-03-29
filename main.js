@@ -117,6 +117,17 @@ function clearProductFilters() {
     renderProducts();
 }
 
+function clearCatalogSearch() {
+    const el = document.getElementById("catalog-search-input");
+    if (el) {
+        el.value = "";
+    }
+    currentIndex = 0;
+    renderProducts();
+}
+
+window.clearCatalogSearch = clearCatalogSearch;
+
 function getStars(rating) {
     const n = Number(rating) || 0;
     const full = Math.floor(n);
@@ -134,12 +145,43 @@ function getBaseList() {
     return source.filter(categoryMatch);
 }
 
+function getSearchQuery() {
+    return document.getElementById("catalog-search-input")?.value?.trim() || "";
+}
+
+/**
+ * Подстринг търсене по име на двойка, шрифтове, описание, образец, тагове (bg етикети).
+ * Няколко думи — AND (всички трябва да се срещат някъде в „сламката“).
+ */
+function pairMatchesSearch(p, rawQuery) {
+    const q = (rawQuery || "").trim().toLowerCase();
+    if (!q) {
+        return true;
+    }
+    const words = q.split(/\s+/).filter(Boolean);
+    const hayParts = [
+        p.name,
+        p.headingFont,
+        p.bodyFont,
+        p.description,
+        p.headingSample,
+        p.bodySample,
+        ...(p.styles || []).map((s) => STYLE_LABELS[s] || s),
+        ...(p.use || []).map((u) => USE_LABELS[u] || u),
+    ];
+    const hay = hayParts.join(" ").toLowerCase();
+    return words.every((w) => hay.includes(w));
+}
+
 /** Сортиран списък според текущата подредба (за AI контекст и рендер). */
 function getSortedCatalogList() {
     if (!products.length) {
         return [];
     }
-    const baseProducts = getBaseList();
+    const searchQ = getSearchQuery();
+    const baseProducts = getBaseList().filter((p) =>
+        pairMatchesSearch(p, searchQ)
+    );
     let sorted = [...baseProducts];
     const sortValue = document.getElementById("sort-select")?.value;
 
@@ -211,6 +253,7 @@ window.getAssistantContext = function getAssistantContext() {
         channel: "web_catalog",
         locale: "bg",
         currentCategory,
+        searchQuery: getSearchQuery(),
         sort: document.getElementById("sort-select")?.value || "",
         sidebarFilters: getSidebarFilterState(),
         customFilterPipelineActive: activeFilteredProducts !== null,
@@ -321,14 +364,23 @@ function renderProducts() {
 
     if (!sortedProducts.length) {
         const hasActiveFilters = activeFilteredProducts !== null;
+        const hasSearch = getSearchQuery().length > 0;
+        const clearSearchBtn = hasSearch
+            ? '<p><button type="button" class="empty-state-clear" onclick="clearCatalogSearch()">Изчисти търсенето</button></p>'
+            : "";
+        const clearFiltersBtn = hasActiveFilters
+            ? '<p><button type="button" class="empty-state-clear" onclick="clearProductFilters()">Изчисти филтрите</button></p>'
+            : "";
+        const hintCategory =
+            !hasActiveFilters && !hasSearch
+                ? "<p>Избери друга категория от менюто горе.</p>"
+                : "";
         productList.innerHTML = `
             <div class="empty-state" role="status">
-                <p>Няма двойки, които отговарят на филтрите и избраната категория.</p>
-                ${
-                    hasActiveFilters
-                        ? '<p><button type="button" class="empty-state-clear" onclick="clearProductFilters()">Изчисти филтрите</button></p>'
-                        : "<p>Избери друга категория от менюто горе.</p>"
-                }
+                <p>Няма двойки за текущите критерии (категория, филтри, търсене).</p>
+                ${clearSearchBtn}
+                ${clearFiltersBtn}
+                ${hintCategory}
             </div>`;
         productCount.textContent = "0 резултата.";
         loadMoreBtn.style.display = "none";
@@ -481,6 +533,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("sort-select")?.addEventListener("change", () => {
+        currentIndex = 0;
+        renderProducts();
+    });
+
+    let searchDebounceTimer;
+    document.getElementById("catalog-search-input")?.addEventListener("input", () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            currentIndex = 0;
+            renderProducts();
+        }, 200);
+    });
+
+    document.getElementById("catalog-search-input")?.addEventListener("search", () => {
+        clearTimeout(searchDebounceTimer);
         currentIndex = 0;
         renderProducts();
     });

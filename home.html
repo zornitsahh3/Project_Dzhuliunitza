@@ -77,6 +77,20 @@
             </aside>
 
             <div class="products-area">
+                <div class="catalog-search" role="search">
+                    <label class="catalog-search__label" for="catalog-search-input">Търсене</label>
+                    <input
+                        type="search"
+                        id="catalog-search-input"
+                        class="catalog-search__input"
+                        placeholder="Име на двойка, шрифт, стил…"
+                        autocomplete="off"
+                        enterkeyhint="search"
+                        aria-describedby="catalog-search-hint"
+                    />
+                    <p id="catalog-search-hint" class="catalog-search__hint">Търси в текущата категория и активните филтри. Няколко думи — всички трябва да съвпадат.</p>
+                </div>
+
                 <div class="category-header">
                     <div class="category-info">
                         <div id="category-title"></div>
