@@ -1,59 +1,81 @@
 <!DOCTYPE html>
-<HTML LANG="bg">
+<html lang="bg">
+<head>
     <meta charset="UTF-8">
-    <head>
-        <link rel="stylesheet" href="style.css">
-        <title>Джулюница</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Джулюница — български шрифтове и двойки</title>
+    <meta name="description" content="Каталог с комбинации от шрифтове с кирилица за уеб и печат. Подбор за български език без компромис с типографията.">
+    <meta property="og:title" content="Джулюница — български шрифтове и двойки">
+    <meta property="og:description" content="Каталог с комбинации от шрифтове с кирилица за уеб и печат.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="bg_BG">
+    <meta name="theme-color" content="#15121c">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <header class="site-header">
-            <div class="logo">
-                <img src="images/logo.png" width="150" class="logo-image">
-            </div>
-        <div class="header-text">   
-            <h1>Джулюница</h1> 
+        <div class="logo">
+            <img src="images/logo_kirilitsa.png" class="logo-image" alt="Джулюница — лого">
+        </div>
+        <div class="header-text">
+            <h1>Джулюница</h1>
             <p>Кирилица без грешки</p>
         </div>
 
-        <nav class="nav-menu">
-            <button onclick="showCategory('all')">Всички</button>
-            <button onclick="showCategory('serif')">Серифни</button>
-            <button onclick="showCategory('sans')">Безсерифни</button>
-            <button onclick="showCategory('display')">Декоративни</button>
+        <nav class="nav-menu" aria-label="Категории шрифтове">
+            <button type="button" onclick="showCategory('all')">Всички</button>
+            <button type="button" onclick="showCategory('serif')">Серифни</button>
+            <button type="button" onclick="showCategory('sans')">Безсерифни</button>
+            <button type="button" onclick="showCategory('display')">Декоративни</button>
         </nav>
     </header>
 
-        <main>
-            <div class="layout">
-                <!-- Filtering sidebar (to the left)-->
-                <aside class="sidebar">
-                 <div class="filter">
+    <main>
+        <section class="intro-lead" aria-label="Въведение">
+            <p>
+                Едно място за преглед на <strong>двойки шрифтове</strong> (заглавие + текст) с добра <span class="text-gradient">кирилица</span> —
+                в един каталог се събират източници като <strong>Google Fonts</strong> и (чрез твой Adobe web project)
+                <strong>Adobe Fonts</strong>, за да избегнеш разпокъсани библиотеки и „универсални“ компромиси.
+            </p>
+        </section>
+
+        <div class="layout">
+            <aside class="sidebar" aria-label="Филтри на каталога">
+                <form class="filter" action="#" onsubmit="return false;">
                     <h3>Филтри</h3>
 
-                    <h4>Комбинация</h4>
-                    <label><input type="checkbox" class="filter-combo" value="serif-sans"> Серифен + Безсерифен</label><br>
-                    <label><input type="checkbox" class="filter-combo" value="sans-sans"> Безсерифен + Безсерифен</label><br>
-                    <label><input type="checkbox" class="filter-combo" value="serif-serif"> Серифен + Серифен</label><br>
+                    <fieldset class="filter-fieldset">
+                        <legend>Комбинация</legend>
+                        <label><input type="checkbox" class="filter-combo" value="serif-sans"> Серифен + безсерифен</label><br>
+                        <label><input type="checkbox" class="filter-combo" value="sans-sans"> Безсерифен + безсерифен</label><br>
+                        <label><input type="checkbox" class="filter-combo" value="serif-serif"> Серифен + серифен</label><br>
+                    </fieldset>
 
-                    <h4>Стил</h4>
-                    <label><input type="checkbox" class="filter-style" value="modern"> Модерен</label><br>
-                    <label><input type="checkbox" class="filter-style" value="minimal"> Минималистичен</label><br>
-                    <label><input type="checkbox" class="filter-style" value="elegant"> Елегантен</label><br>
-                    <label><input type="checkbox" class="filter-style" value="bold"> Смел</label><br>
+                    <fieldset class="filter-fieldset">
+                        <legend>Стил</legend>
+                        <label><input type="checkbox" class="filter-style" value="modern"> Модерен</label><br>
+                        <label><input type="checkbox" class="filter-style" value="minimal"> Минималистичен</label><br>
+                        <label><input type="checkbox" class="filter-style" value="elegant"> Елегантен</label><br>
+                        <label><input type="checkbox" class="filter-style" value="bold"> Смел</label><br>
+                    </fieldset>
 
-                    <h4>Кирилица</h4>
-                    <label><input type="checkbox" id="cyrillic-only"> Само с поддръжка на кирилица</label><br>
+                    <fieldset class="filter-fieldset">
+                        <legend>Кирилица</legend>
+                        <label><input type="checkbox" id="cyrillic-only"> Само с поддръжка на кирилица</label>
+                    </fieldset>
 
-                    <h4>Подходящ за</h4>
-                    <label><input type="checkbox" class="filter-use" value="web"> Уебсайтове</label><br>
-                    <label><input type="checkbox" class="filter-use" value="logo"> Лого</label><br>
-                    <label><input type="checkbox" class="filter-use" value="social"> Социални мрежи</label><br>
-                    <label><input type="checkbox" class="filter-use" value="presentation"> Презентации</label><br>
-                    <button onclick="applyFilters()">Приложи</button><br>   
-                 </div>
-             </aside>   
-                <!-- Products area (to the right)-->
+                    <fieldset class="filter-fieldset">
+                        <legend>Подходящ за</legend>
+                        <label><input type="checkbox" class="filter-use" value="web"> Уебсайтове</label><br>
+                        <label><input type="checkbox" class="filter-use" value="logo"> Лого</label><br>
+                        <label><input type="checkbox" class="filter-use" value="social"> Социални мрежи</label><br>
+                        <label><input type="checkbox" class="filter-use" value="presentation"> Презентации</label><br>
+                    </fieldset>
+
+                    <button type="button" onclick="applyFilters()" aria-label="Приложи избраните филтри към каталога">Приложи</button>
+                </form>
+            </aside>
+
             <div class="products-area">
                 <div class="category-header">
                     <div class="category-info">
@@ -62,40 +84,55 @@
                     </div>
 
                     <div class="sort-dropdown">
-                        <label for="sort-select">Sort:</label>
+                        <label for="sort-select">Подредба</label>
                         <select id="sort-select">
                             <option value="">По подразбиране</option>
-                            <option value="az">A → Z</option>
-                            <option value="za">Z → A</option>
+                            <option value="az">А → Я</option>
+                            <option value="za">Я → А</option>
                             <option value="popular">Най-популярни</option>
                             <option value="modern">Най-модерни</option>
                         </select>
                     </div>
                 </div>
 
-                <div id="product-count"></div>
+                <div class="specimen-controls" aria-label="Настройки на образеца">
+                    <label for="specimen-size">Размер на образеца (px)</label>
+                    <input type="range" id="specimen-size" min="14" max="40" value="22">
+                </div>
+
+                <div id="product-count" aria-live="polite"></div>
 
                 <div id="product-list" class="product-grid"></div>
 
-                <button id="load-more" onclick="loadMore()">Load More</button>
-
+                <button type="button" id="load-more" onclick="loadMore()">Още</button>
             </div>
-            </div>
-        </main>
-        <script src="fonts_list.js"></script>
-        <script src="main.js"></script>
+        </div>
+    </main>
 
-        <footer class="footer">
-            <div class="footer-container">
+    <footer class="footer">
+        <div class="footer-container">
             <p class="footer-text">Кирилица без грешки — платформа за шрифтове и комбинации на български език.</p>
-
             <div class="footer-links">
                 <a href="contact.html">Контакти</a>
                 <a href="about.html">За проекта</a>
                 <a href="privacy.html">Политика за поверителност</a>
             </div>
-                </div>
-            </div>
-        </footer>
-    </body>
-</HTML>
+        </div>
+    </footer>
+
+    <!-- Чат асистент (логиката в chatbot.js) -->
+    <div id="chatbot-container" role="dialog" aria-label="Чат асистент">
+        <div id="chatbot-messages" aria-live="polite"></div>
+        <div class="chatbot-input-row">
+            <label class="visually-hidden" for="chatbot-input">Съобщение към асистента</label>
+            <input type="text" id="chatbot-input" placeholder="Попитай за шрифтове, кирилица…" autocomplete="off" />
+            <button type="button" id="chatbot-send">Изпрати</button>
+        </div>
+    </div>
+
+    <script src="adobe_catalog.js"></script>
+    <script src="fonts_list.js"></script>
+    <script src="main.js"></script>
+    <script src="chatbot.js"></script>
+</body>
+</html>

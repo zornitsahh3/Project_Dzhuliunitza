@@ -1,11 +1,23 @@
-/**
- * Зарежда Google Fonts с кирилица и изгражда каталог за main.js.
- * Ограничи API ключа в Google Cloud (HTTP referrer), не го публикуваш публично без ограничения.
- */
-const API_KEY = process.env.API_KEY;
+// Зарежда Google Fonts с кирилица и изгражда каталог за main.js.
+
+const API_KEY = "AIzaSyCVa2gC0rXqaTeZruE97PRpbbmK8fuU5V8";
 
 const STYLE_POOL = ["modern", "minimal", "elegant", "bold"];
 const USE_POOL = ["web", "logo", "social", "presentation"];
+
+const SPECIMEN_HEADINGS = [
+    "Годишен отчет 2026",
+    "Магазин „Щастлива улица“",
+    "ЧЗВ: доставка и плащане",
+    "Резюме: UX за публични услуги",
+];
+
+const SPECIMEN_BODIES = [
+    "Поръчка № BG-12 345 · 1 249,90 лв. с ДДС. Доставка до офис: 3–5 работни дни. Жълтица, щъркел, мляко — проверка на букви и цифри.",
+    "Община Русе обявява обществена поръчка с краен срок 17:00 ч. на 15.04.2026 г. Документите са в раздел „За фирми“.",
+    "„Нямаме нужда от още един руски шрифт с кирилица“ — каза арт директорът и отвори каталога с български двойки.",
+    "Температура: −3 °C. Влажност: 68 %. Имейл: hello@dzhulyunitsa.bg · тел. +359 88 000 0000.",
+];
 
 function hashStr(s) {
     let h = 0;
@@ -47,9 +59,20 @@ function navCategoryFromHeading(headingCat) {
     return "sans";
 }
 
+function specimenForIndex(i, name) {
+    const h = hashStr(name + String(i));
+    const hi = h % SPECIMEN_HEADINGS.length;
+    const bi = (h >> 3) % SPECIMEN_BODIES.length;
+    return {
+        headingSample: SPECIMEN_HEADINGS[hi],
+        bodySample: SPECIMEN_BODIES[bi],
+    };
+}
+
 function buildPairEntry(i, heading, body) {
     const name = `${heading.family} + ${body.family}`;
     const seed = name + String(i);
+    const specimen = specimenForIndex(i, name);
     return {
         id: i,
         name,
@@ -61,18 +84,21 @@ function buildPairEntry(i, heading, body) {
         cyrillic: true,
         headingFont: heading.family,
         bodyFont: body.family,
-        headingSample: "Заглавие пример",
-        bodySample: "Това е примерен текст на български език.",
+        headingSample: specimen.headingSample,
+        bodySample: specimen.bodySample,
         rating: 3 + (i % 3),
         modernScore: (hashStr(name) % 10) + 1,
     };
 }
 
 function notifyReady(catalog) {
+    window.__fontsCatalogLoaded = true;
     if (typeof window.onFontsCatalogReady === "function") {
         window.onFontsCatalogReady(catalog);
     }
 }
+
+window.__fontsCatalogLoaded = false;
 
 fetch(
     `https://www.googleapis.com/webfonts/v1/webfonts?key=${encodeURIComponent(API_KEY)}`
@@ -133,8 +159,15 @@ fetch(
             );
         }
 
-        notifyReady(catalog);
+        const adobeExtra = Array.isArray(window.ADOBE_FONTS_CATALOG)
+            ? window.ADOBE_FONTS_CATALOG
+            : [];
+        /** Adobe първи — показва идеята „няколко намеряващи се източника на едно място“. */
+        notifyReady([...adobeExtra, ...catalog]);
     })
     .catch(() => {
-        notifyReady([]);
+        const adobeExtra = Array.isArray(window.ADOBE_FONTS_CATALOG)
+            ? window.ADOBE_FONTS_CATALOG
+            : [];
+        notifyReady(adobeExtra.length ? adobeExtra : []);
     });
