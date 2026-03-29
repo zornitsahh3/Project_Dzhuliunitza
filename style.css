@@ -31,6 +31,17 @@ html {
     color-scheme: dark;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 #chatbot-container {
   position: fixed;
   bottom: 20px;
@@ -148,6 +159,7 @@ html {
 body {
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
     background-color: var(--color-bg-deep);
     background-image:
@@ -208,9 +220,16 @@ main {
     padding: 15px var(--space-l);
     border-bottom: 1px solid var(--color-border);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--space-m);
+    row-gap: var(--space-s);
     box-shadow: 0 1px 0 rgba(112, 71, 235, 0.08);
+}
+
+.header-text {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .logo {
@@ -365,13 +384,9 @@ button:focus-visible {
 .site-header .nav-menu {
     margin-bottom: 0;
     margin-left: auto;
+    flex-shrink: 0;
 }
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
 .product-card img {
     width: 150px;
     height: 150px;
@@ -734,53 +749,157 @@ button:focus-visible {
     color: var(--color-accent);
 }
 
+@media (max-width: 1200px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .site-header {
+        padding: var(--space-m);
+    }
+
+    .site-header .nav-menu {
+        order: 3;
+        width: 100%;
+        margin-left: 0;
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+    }
+
+    .site-header .nav-menu button {
+        flex: 1 1 calc(50% - var(--space-xs));
+        min-width: 0;
+        min-height: 44px;
+        padding: 10px var(--space-s);
+        font-size: 0.8125rem;
+    }
+
+    .logo {
+        max-width: 160px;
+    }
+
+    .logo-img,
+    .logo-image {
+        max-height: 44px;
+    }
+
+    .header-text h1 {
+        font-size: 1.125rem;
+    }
+}
+
 @media (max-width: 768px) {
     .layout {
         flex-direction: column;
         padding: var(--space-m);
+        gap: var(--space-m);
     }
 
     .sidebar {
         width: 100%;
         display: flex;
+        flex-direction: column;
         gap: var(--space-m);
-        flex-wrap: wrap;
     }
 
     .filter,
     .sort {
-        flex: 1;
-        min-width: 160px;
+        flex: none;
+        width: 100%;
+        min-width: 0;
     }
-    .logo {
-        width:120px;
-    }
+
     .category-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: var(--space-m);
     }
-    .site-header {
-        padding: var(--space-m);
+
+    .sort-dropdown {
+        width: 100%;
+        flex-wrap: wrap;
     }
+
+    .sort-dropdown select {
+        flex: 1;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .specimen-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .specimen-controls input[type="range"] {
+        width: 100%;
+        max-width: 100%;
+    }
+
     .product-header {
         flex-direction: column;
-        align-items:flex-start;
-        gap:10px;
+        align-items: flex-start;
+        gap: 10px;
     }
+
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-m);
     }
+
     .product-card img {
         width: 100%;
         max-width: 140px;
         height: auto;
         aspect-ratio: 1;
     }
+
+    #chatbot-container {
+        left: max(12px, env(safe-area-inset-left, 0px));
+        right: max(12px, env(safe-area-inset-right, 0px));
+        width: auto;
+        bottom: max(12px, env(safe-area-inset-bottom, 0px));
+        max-height: min(400px, 52vh);
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-s);
+    }
 }
 
 @media (max-width: 480px) {
+    .intro-lead {
+        padding: var(--space-l) var(--space-m) var(--space-m);
+    }
+
+    .intro-lead p {
+        font-size: 1rem;
+        text-align: left;
+    }
+
     .product-grid {
         grid-template-columns: 1fr;
+    }
+
+    #category-title {
+        font-size: 1.25rem;
+    }
+
+    .site-header .nav-menu button {
+        font-size: 0.75rem;
+        padding: 10px 6px;
     }
 }
