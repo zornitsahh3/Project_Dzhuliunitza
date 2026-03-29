@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-## Setup Instructions
-=======
-# Джулюница · кирилица без драма
+# Джулюница · кирилица без грешки
 
 > Платформа за **двойки шрифтове** с фокус върху българска кирилица — едно място, по-малко „руски шрифт за всичко“ и повече смислен дизайн.
 
@@ -75,13 +72,3 @@
 - Още източници (не само Google + Adobe, а също и локални дизайнери, които разработват и предлагат свои авторски шрифтове).
 - Страница за всяка двойка с лиценз и линкове.
 
----
->>>>>>> 85c3271 (Added ibot, updated wuth one more api)
-
-1. Create a `.env` file in the root of the project
-2. Add your Google API key:
-```
-API_KEY=your_key_here
-//the key will be sent via the submission system regarding security awareness
-```
-3. Run the project normally
