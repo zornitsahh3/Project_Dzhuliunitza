@@ -1,4 +1,5 @@
-<img width="2534" height="1398" alt="image" src="https://github.com/user-attachments/assets/36220355-7aaa-4031-898f-d479a1382ecb" />
+<img width="2527" height="1382" alt="image" src="https://github.com/user-attachments/assets/b5afe03b-72bf-4fd9-b233-7c9cdb51eb7b" />
+
 
 # Джулюница · кирилица без грешки
 
